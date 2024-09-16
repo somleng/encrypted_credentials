@@ -2,14 +2,15 @@
 
 require "yaml"
 require "base64"
+require_relative "coder"
 
 module EncryptedCredentials
   class EncryptedFile
     attr_reader :file, :coder
 
-    def initialize(file:, coder:)
+    def initialize(file:, **options)
       @file = file
-      @coder = coder
+      @coder = options.fetch(:coder) { Coder.new }
     end
 
     def credentials

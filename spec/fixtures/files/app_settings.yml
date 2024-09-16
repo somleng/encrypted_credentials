@@ -1,0 +1,6 @@
+default: &default
+  foo: bar
+
+production: &production
+  <<: *default
+  secret: "<%= TestAppSettings.new.credentials.fetch('key') %>"

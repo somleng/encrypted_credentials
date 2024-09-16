@@ -4,11 +4,11 @@ module EncryptedCredentials
   class Coder
     DEFAULT_ALGORITHM = "aes-256-cbc"
 
-    attr_reader :key, :algorithm
+    attr_reader :algorithm
 
-    def initialize(key:, algorithm: DEFAULT_ALGORITHM)
-      @key = key
-      @algorithm = algorithm
+    def initialize(**options)
+      @key = options.fetch(:key) { -> { ENV.fetch("APP_MASTER_KEY") } }
+      @algorithm = options.fetch(:algorithm, DEFAULT_ALGORITHM)
     end
 
     def encrypt(content)
@@ -23,6 +23,12 @@ module EncryptedCredentials
       cipher.decrypt
       cipher.key = [ key ].pack("H*")
       cipher.update(content) + cipher.final
+    end
+
+    private
+
+    def key
+      @key.respond_to?(:call) ? @key.call : @key
     end
   end
 end
