@@ -46,6 +46,7 @@ GEM
     logger (1.6.1)
     minitest (5.25.1)
     ostruct (0.6.0)
+    ox (2.14.18)
     parallel (1.26.3)
     parser (3.3.5.0)
       ast (~> 2.4.1)
@@ -111,6 +112,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-ssm
   encrypted_credentials!
+  ox
   rake
   rspec
   rubocop-performance
