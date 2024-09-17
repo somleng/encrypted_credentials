@@ -86,18 +86,11 @@ module EncryptedCredentials
 
     def default_encrypted_file
       return unless encrypted_filepath.exist?
-      return if coder.nil?
 
-      EncryptedFile.new(file: encrypted_filepath, coder:)
-    end
-
-    def coder
-      @coder ||= begin
-        if ENV.key?("APP_MASTER_KEY")
-          Coder.new(key: ENV.fetch("APP_MASTER_KEY"))
-        elsif key_filepath.exist?
-          Coder.new(key: key_filepath.read.chomp)
-        end
+      if !ENV.key?("APP_MASTER_KEY") && key_filepath.exist?
+        EncryptedFile.new(file: encrypted_filepath, coder: Coder.new(key: key_filepath.read.chomp))
+      else
+        EncryptedFile.new(file: encrypted_filepath)
       end
     end
 
