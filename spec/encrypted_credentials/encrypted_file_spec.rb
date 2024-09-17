@@ -1,21 +1,21 @@
 require "spec_helper"
 require "encrypted_credentials/encrypted_file"
 require "encrypted_credentials/coder"
+require "yaml"
 
 module EncryptedCredentials
   RSpec.describe EncryptedFile do
-    it "reads an encrypted file as yaml" do
-      encrypted_credentials = file_fixture("credentials.yml.enc")
+    it "reads an encrypted file" do
+      encrypted_credentials = file_fixture("test_config/credentials.yml.enc")
 
       encrypted_file = EncryptedFile.new(file: encrypted_credentials, coder: build_coder)
-      credentials = encrypted_file.credentials
+      result = YAML.load(encrypted_file.read, aliases: true)
 
-      expect(credentials.fetch("production")).to eq({ "key" => "secret" })
-      expect(credentials.fetch("staging")).to eq(credentials.fetch("production"))
+      expect(result.fetch("production")).to eq({ "secret" => "production-secret" })
     end
 
     it "writes an encrypted file" do
-      encrypted_credentials = file_fixture("credentials.yml.enc")
+      encrypted_credentials = file_fixture("test_config/credentials.yml.enc")
 
       FileUtils.mkdir_p("tmp")
       FileUtils.cp(encrypted_credentials, "tmp/credentials.yml.enc")
@@ -23,13 +23,13 @@ module EncryptedCredentials
       encrypted_file = EncryptedFile.new(file: Pathname("tmp/credentials.yml.enc"), coder: build_coder)
 
       encrypted_file.write({ "foo" => "bar" }.to_yaml)
-      credentials = encrypted_file.credentials
+      content = YAML.load(encrypted_file.read)
 
-      expect(credentials).to eq({ "foo" => "bar" })
+      expect(content).to eq({ "foo" => "bar" })
     end
 
     def build_coder
-      Coder.new(key: file_fixture("master.key").read.chomp)
+      Coder.new(key: file_fixture("test_config/master.key").read.chomp)
     end
   end
 end

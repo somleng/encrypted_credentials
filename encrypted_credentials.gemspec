@@ -30,6 +30,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = [ "lib" ]
 
   # Uncomment to register a new dependency of your gem
+  spec.add_dependency "ostruct"
+  spec.add_dependency "base64"
+
   spec.add_development_dependency "aws-sdk-ssm"
 
   # For more information and examples about making a new gem, check out our

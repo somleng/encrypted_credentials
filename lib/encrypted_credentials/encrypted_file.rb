@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "yaml"
 require "base64"
 require_relative "coder"
 
@@ -11,11 +10,6 @@ module EncryptedCredentials
     def initialize(file:, **options)
       @file = file
       @coder = options.fetch(:coder) { Coder.new }
-    end
-
-    def credentials
-      content = read
-      YAML.load(content, aliases: true)
     end
 
     def read
