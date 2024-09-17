@@ -16,72 +16,72 @@ gem "encrypted_credentials", github: "somleng/encrypted_credentials"
 
 ## Usage
 
-Given the following files:
+### Quick Start
+
+### 1. Generate a default credentials file
+
+```
+bundle exec edit_credentials
+```
+
+Paste the following:
+
+```yml
+production: &production
+  secret: "production-secret"
+
+staging:
+  <<: *production
+  secret: "staging-secret"
+```
+
+### 2. Create an `app_settings.yml` in your config directory
 
 ```yml
 # config/app_settings.yml
 
 default: &default
-  foo: "bar"
-  password: "secret"
+  foo: bar
+  secret: development-secret
 
 production: &production
   <<: *default
-  password: "<%= AppSettings.credentials.fetch('password') %>"
+  secret: "<%= app_settings.credentials.fetch('secret') %>"
 
 staging:
   <<: *production
-
-development: &development
-  <<: *default
-
-test:
-  <<: *development
+  secret: "<%= app_settings.credentials.fetch('secret') %>"
 ```
 
-```yml
-# config/credentials.yml.enc
-# edit this file by running:
-# bundle exec edit_credentials -f config/credentials.yml.enc -k config/master.key
-
-production: &production
-  password: "super-secret"
-
-staging:
-  <<: *production
-```
+### 3. Create an `app_settings.rb` in your config directory
 
 ```rb
 # config/app_settings.rb
 require "encrypted_credentials/app_settings"
-require "encrypted_credentials/encrypted_file"
 
-AppSettings = Class.new(EncryptedCredentials::AppSettings) do
-  def initialize(**)
-    super(
-      file: Pathname(File.expand_path("app_settings.yml", __dir__)),
-      encrypted_file: EncryptedCredentials::EncryptedFile.new(
-        file: Pathname(File.expand_path("credentials.yml.enc", __dir__))
-      )
-      **
-    )
-  end
-end.new
+AppSettings = EncryptedCredentials::AppSettings.new(config_directory: File.expand_path(__dir__))
 ```
+
+### 4. Run an IRB shell
 
 ```bash
-APP_ENV=production ./bin/console
+APP_ENV=production irb
 ```
 
+### 5. Play around
+
 ```rb
+require "bundler/setup"
+require_relative "config/app_settings"
+
 AppSettings.env
 # "production"
 
-AppSettings.fetch(:password)
-# "super-secret"
-
 AppSettings.fetch(:foo)
 # "bar"
+
+AppSettings.fetch(:secret)
+# "production-secret"
 ```
 
 ## Development
