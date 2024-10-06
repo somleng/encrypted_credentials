@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in tts_voices.gemspec
+# Specify your gem's dependencies in encrypted_credentials.gemspec
 gemspec
 
 gem "rake"
