@@ -4,13 +4,17 @@ require "aws-sdk-ssm"
 
 module EncryptedCredentials
   class EncryptedEnvironmentVariables
-    attr_reader :ssm_client, :environment
+    attr_reader :environment
 
     SSM_PARAMETER_NAME_PATTERN = "_SSM_PARAMETER_NAME"
 
-    def initialize(ssm_client: Aws::SSM::Client.new, environment: ENV)
-      @ssm_client = ssm_client
-      @environment = environment
+    def initialize(**options)
+      @ssm_client = options.fetch(:ssm_client) { -> { Aws::SSM::Client.new } }
+      @environment = options.fetch(:environment) { ENV }
+    end
+
+    def ssm_client
+      @ssm_client.respond_to?(:call) ? @ssm_client.call : @ssm_client
     end
 
     def decrypt
