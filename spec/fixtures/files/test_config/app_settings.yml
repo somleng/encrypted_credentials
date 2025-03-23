@@ -1,6 +1,8 @@
 default: &default
   foo: bar
   secret: development-secret
+  nested:
+    key: value
 
 production: &production
   <<: *default

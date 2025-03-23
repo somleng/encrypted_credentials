@@ -10,6 +10,7 @@ module EncryptedCredentials
       expect(app_settings.fetch(:secret)).to eq("production-secret")
       expect(app_settings[:foo]).to eq("bar")
       expect(app_settings.credentials.fetch(:secret)).to eq("production-secret")
+      expect(app_settings.dig("nested", "key")).to eq("value")
     end
 
     it "handles environment specific credentials" do

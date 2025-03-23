@@ -23,6 +23,10 @@ module EncryptedCredentials
       def [](key)
         data[key.to_s]
       end
+
+      def dig(*keys)
+        data.dig(*keys)
+      end
     end
 
     attr_reader :environment, :config_directory, :settings_filepath, :encrypted_filepath, :key_filepath, :encrypted_file, :credentials_root_key
@@ -43,6 +47,10 @@ module EncryptedCredentials
 
     def [](*)
       settings[*]
+    end
+
+    def dig(...)
+      settings.dig(...)
     end
 
     def env
